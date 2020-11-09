@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="416.0" prefWidth="525.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <Label layoutX="192.0" layoutY="24.0" prefHeight="36.0" prefWidth="141.0" text="Schedule">
+         <font>
+            <Font name="System Bold" size="25.0" />
+         </font>
+      </Label>
+      <TextField fx:id="titleTExtbox" layoutX="148.0" layoutY="80.0" prefHeight="25.0" prefWidth="160.0" />
+      <TextField fx:id="professorTextbox" layoutX="148.0" layoutY="126.0" prefHeight="25.0" prefWidth="160.0" />
+      <TextField fx:id="dayTextbox" layoutX="148.0" layoutY="171.0" prefHeight="25.0" prefWidth="160.0" />
+      <Button fx:id="addButton" layoutX="332.0" layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="57.0" text="ADD" />
+      <Label layoutX="97.0" layoutY="84.0" text="Title" />
+      <Label layoutX="83.0" layoutY="130.0" text="Professor" />
+      <Label layoutX="98.0" layoutY="175.0" text="Day" />
+      <ComboBox fx:id="combobox" layoutX="373.0" layoutY="216.0" prefWidth="150.0" />
+      <TableView fx:id="tableView" layoutX="14.0" layoutY="216.0" prefHeight="200.0" prefWidth="355.0">
+        <columns>
+          <TableColumn fx:id="titleCol" prefWidth="152.0" text="Title" />
+          <TableColumn fx:id="professorCol" prefWidth="105.0" text="Professor" />
+            <TableColumn fx:id="dayCol" prefWidth="97.0" text="Day" />
+        </columns>
+      </TableView>
+      <Label fx:id="label" layoutX="389.0" layoutY="34.0" text="Label" />
+   </children>
+</AnchorPane>
