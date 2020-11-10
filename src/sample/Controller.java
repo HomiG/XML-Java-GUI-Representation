@@ -1,9 +1,9 @@
 package sample;
 
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -53,6 +53,10 @@ public class Controller implements Initializable {
     private Label label;
 
 
+    public ObservableList<TableViewObject> data = FXCollections.observableArrayList();
+
+
+
     @FXML
     private TableColumn<TableViewObject, String> titleCol;
 
@@ -61,6 +65,100 @@ public class Controller implements Initializable {
 
     @FXML
     private TableColumn<TableViewObject, String> dayCol;
+
+    String filePathString = "src/sample/9_RIGHT_schedule.xml";
+
+    @FXML
+    private void comboAction(ActionEvent event) {
+
+        ObservableList<TableViewObject> tempList = FXCollections.observableArrayList();
+
+        System.out.println(data);
+
+
+        tableView.getItems().clear();
+
+        //creating a constructor of file class and parsing an XML file
+        File file = new File(filePathString);
+        //an instance of factory that gives a document builder
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        //an instance of builder to parse the specified xml file
+        DocumentBuilder db = null;
+        try {
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+        Document doc = null;
+        try {
+            doc = db.parse(file);
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        doc.getDocumentElement().normalize();
+        //System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
+        List<NodeList> nodes = new ArrayList<NodeList>();
+
+        NodeList nodeList = doc.getElementsByTagName("Lesson");
+        NodeList nodeList1 = doc.getElementsByTagName("Seminar");
+
+        nodes.add(nodeList);
+        nodes.add(nodeList1);
+
+
+        String title;
+        String professor;
+        String day;
+
+        for(int j = 0; j < nodes.size(); j ++){
+            title = "";
+            professor = "";
+            day = "";
+            for (int itr = 0; itr < nodes.get(j).getLength(); itr++) {
+                Node node = nodes.get(j).item(itr);
+                System.out.println("\nNode Name :" + node.getNodeName());
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) node;
+                    title = eElement.getElementsByTagName("Title").item(0).getTextContent();
+                    //System.out.println("Title: " + eElement.getElementsByTagName("Title").item(0).getTextContent());
+                    if(eElement.getElementsByTagName("Professor").item(0) != null)
+                        professor = eElement.getElementsByTagName("Professor").item(0).getTextContent();
+                    //System.out.println("Professor: " + eElement.getElementsByTagName("Professor").item(0).getTextContent());
+
+                    if (eElement.getElementsByTagName("Lecture").getLength() >= 1){
+                        Element eElement1 = (Element) eElement;
+
+                        for (int i=0; i<eElement.getElementsByTagName("Lecture").getLength() ; i++){
+
+                            System.out.println("Lecture: " + eElement1.getElementsByTagName("Day").item(i).getTextContent());
+                            day = eElement1.getElementsByTagName("Day").item(i).getTextContent();
+                            TableViewObject object;
+                            object = new TableViewObject(title, professor, day);
+                            if(day.equals(combobox.getValue())){
+                                tempList.add(object);
+                                tableView.setItems(tempList);
+                            }
+                            if(combobox.getValue().equals("AllDays")){
+                                tempList.add(object);
+                                tableView.setItems(tempList);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+    }
+
+
+
+
+
+
 
 
 
@@ -84,18 +182,17 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        ObservableList<TableViewObject> data = FXCollections.observableArrayList();
 
 
         //Validate XML
-        if (validateXMLSchema("src/com/company/9.xsd", "src/com/company/9_RIGHT_schedule.xml"))
+        if (validateXMLSchema("src/com/company/9.xsd", filePathString))
             System.out.println("Trccue");
         else
             System.out.println("fasle");
 
 
         //creating a constructor of file class and parsing an XML file
-        File file = new File("src/sample/9_RIGHT_schedule.xml");
+        File file = new File(filePathString);
         //an instance of factory that gives a document builder
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         //an instance of builder to parse the specified xml file
@@ -169,6 +266,10 @@ public class Controller implements Initializable {
         tableView.setEditable(false);
         tableView.setItems(data);
 
+
+
+
+
         combobox.getItems().addAll(
                 "Monday",
                 "Tuesday",
@@ -177,15 +278,26 @@ public class Controller implements Initializable {
                 "Friday",
                 "AllDays"
         );
-        combobox.setValue("Monday");
+        combobox.setValue("AllDays");
 
 
     }
 
 
+    public void buttonClick(ActionEvent actionEvent) throws ParserConfigurationException, IOException, SAXException {
+        File file = new File(filePathString);
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document document = db.parse(file);
+        Element root = document.getDocumentElement();
+        Element newLesson = document.createElement("Lesson");
+        root.appendChild(newLesson);
+
+        
 
 
-
+    }
 }
 
 
