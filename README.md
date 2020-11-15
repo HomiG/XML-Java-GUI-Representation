@@ -8,3 +8,4 @@ Features:
 -	Add XML elements directly from GUI.
 
 
+![alt text](https://i.imgur.com/7GKGctk.png)
