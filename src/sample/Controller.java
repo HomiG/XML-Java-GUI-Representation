@@ -15,6 +15,9 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -24,6 +27,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,6 +59,7 @@ public class Controller implements Initializable {
 
     public ObservableList<TableViewObject> data = FXCollections.observableArrayList();
 
+    Document doc = null;
 
 
     @FXML
@@ -185,10 +190,10 @@ public class Controller implements Initializable {
 
 
         //Validate XML
-        if (validateXMLSchema("src/com/company/9.xsd", filePathString))
-            System.out.println("Trccue");
+        if (validateXMLSchema("src/sample/9.xsd", filePathString))
+            label.setText("XML IS VALID!");
         else
-            System.out.println("fasle");
+            label.setText("XML IS NOT VALID!");
 
 
         //creating a constructor of file class and parsing an XML file
@@ -202,7 +207,7 @@ public class Controller implements Initializable {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
-        Document doc = null;
+        doc = null;
         try {
             doc = db.parse(file);
         } catch (SAXException e) {
@@ -212,6 +217,7 @@ public class Controller implements Initializable {
         }
         doc.getDocumentElement().normalize();
         //System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
+
         List<NodeList> nodes = new ArrayList<NodeList>();
 
         NodeList nodeList = doc.getElementsByTagName("Lesson");
@@ -285,17 +291,64 @@ public class Controller implements Initializable {
 
 
     public void buttonClick(ActionEvent actionEvent) throws ParserConfigurationException, IOException, SAXException {
-        File file = new File(filePathString);
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document document = db.parse(file);
-        Element root = document.getDocumentElement();
-        Element newLesson = document.createElement("Lesson");
-        root.appendChild(newLesson);
 
-        
 
+        Element lesson = doc.createElement("Lesson");
+
+        Element title = doc.createElement("Title");
+        title.appendChild(doc.createTextNode(titleTExtbox.getText()));
+
+        Element professor = doc.createElement("Professor");
+        professor.appendChild(doc.createTextNode(professorTextbox.getText()));
+
+        Element myLectures = doc.createElement("Lecture");
+
+        Element day = doc.createElement("Day");
+        day.appendChild(doc.createTextNode(dayTextbox.getText()));
+
+        Element time= doc.createElement("Time");
+        time.appendChild(doc.createTextNode("09:00-21:00"));
+        myLectures.setAttribute("Classroom", "BA");
+        myLectures.appendChild(day);
+        myLectures.appendChild(time);
+        lesson.appendChild(title);
+
+        lesson.appendChild(myLectures);
+        lesson.appendChild(professor);
+
+
+        NodeList rootList = doc.getElementsByTagName("Schedule");
+        Node root = rootList.item(0);
+
+        // append using a helper method
+        root.appendChild(lesson);
+
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        try {
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt%7Dindent-amount", "4");
+
+            DOMSource source = new DOMSource(doc);
+
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(new File("src/sample/9_RIGHT_schedule.xml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            StreamResult result = new StreamResult(writer);
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println("End");
 
     }
 }

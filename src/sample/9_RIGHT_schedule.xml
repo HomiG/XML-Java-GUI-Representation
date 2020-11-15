@@ -1,7 +1,5 @@
-<?xml version="1.0"?> 
-<Schedule xmlns ="schedule"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:noNamespaceSchemaLocation="schedule.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Schedule xmlns="schedule" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="schedule.xsd">
         <Lesson>
                 <Title>Artificial Intelligence</Title>
                 <Lecture Classroom="BA">
@@ -29,4 +27,12 @@
 				</Lecture>
 				<Professor>Hatzilygeroudis</Professor>
         </Lesson>
+<Lesson>
+<Title>test</Title>
+<Lecture Classroom="BA">
+<Day>Monday</Day>
+<Time>09:00-21:00</Time>
+</Lecture>
+<Professor>trest</Professor>
+</Lesson>
 </Schedule>
